@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="shortcut icon" type="image/png" href="/static/favicon.png" />
+    <title>HDFS Commander</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarTogglerDemo01"
+        aria-controls="navbarTogglerDemo01"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a class="navbar-brand">HDFS Commander</a>
+        <ul class="navbar-nav">
+          <li class="nav-item nav-breadcumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/browse">Home</a></li>
+            </ol>
+          </li>
+        </ul>
+        <a class="nav-link ml-auto" href="/sysinfo">System info</a>
+      </div>
+    </nav>
+    <div class="container mt-5">
+      {{if .Error}}
+      <h2>{{ .Error }}</h2>
+      {{else}}
+      <h1>File system informations</h1>
+      <p>Capacity: {{call .Humanize .FsInfo.Capacity}}</p>
+      <p>Used: {{call .Humanize .FsInfo.Used}}</p>
+      <p>Remaining: {{call .Humanize .FsInfo.Remaining}}</p>
+      <p>Under replicated: {{call .Humanize .FsInfo.UnderReplicated}}</p>
+      <p>Corrupt blocks: {{.FsInfo.CorruptBlocks}}</p>
+      <p>Missing blocks: {{.FsInfo.MissingBlocks}}</p>
+      <p>MissingReplOneBlocks: {{.FsInfo.MissingReplOneBlocks}}</p>
+      <p>Blocks in future: {{.FsInfo.BlocksInFuture}}</p>
+      <p>Pending deletion blocks: {{.FsInfo.PendingDeletionBlocks}}</p>
+      {{end}}
+    </div>
+  </body>
+</html>

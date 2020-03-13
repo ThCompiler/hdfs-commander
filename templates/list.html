@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="shortcut icon" type="image/png" href="/static/favicon.ico" />
+    <script src="/static/jquery-3.4.1.min.js"></script>
+    <script src="/static/bootstrap.min.js"></script>
+    <title>HDFS Commander</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarTogglerDemo01"
+        aria-controls="navbarTogglerDemo01"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a class="navbar-brand">HDFS Commander</a>
+        <ul class="navbar-nav">
+          <li class="nav-item nav-breadcumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/browse">Home</a></li>
+              {{range $idx, $bc := .Breadcrumbs}}
+              <li class="breadcrumb-item">
+                <a href="/browse/{{$bc}}">{{index $.Parts $idx}}</a>
+              </li>
+              {{end}}
+            </ol>
+          </li>
+        </ul>
+        <a class="nav-link ml-auto" href="/sysinfo">System info</a>
+      </div>
+    </nav>
+    <div class="container mt-5">
+      {{if .Message}}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{.Message}}
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {{end}} {{if .Error}}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{.Error}}
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {{end}}
+      <button
+        id="modalButton"
+        class="btn btn-outline-secondary"
+        type="button"
+        data-toggle="collapse"
+        data-target="#uploadForm"
+      >
+        Upload a file
+      </button>
+      <div class="collapse my-2 text-center" id="uploadForm">
+        <form action="/upload" method="post" enctype="multipart/form-data">
+          <input type="file" name="uploadfile" id="uploadfile" />
+          <input type="hidden" name="path" value="{{.BasePath}}" />
+          <button class="btn btn-success" type="submit" id="uploadfile">
+            Upload
+          </button>
+        </form>
+      </div>
+      <table class="table table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Size</th>
+            <th scope="col">Mode</th>
+            <th scope="col">Modification time</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Files}}
+          <tr>
+            {{if .IsDir}} {{if $.BasePath}}
+            <td>
+              <a href="/browse/{{$.BasePath}}/{{.Name}}">{{.Name}}</a>
+            </td>
+            {{else}}
+            <td><a href="/browse/{{.Name}}">{{.Name}}</a></td>
+            {{end}} {{else}}
+            <td>{{.Name}}</td>
+            {{end}}
+            <td>{{call $.Humanize .Size}}</td>
+            <td>{{.Mode}}</td>
+            <td>{{.ModTime}}</td>
+            <td>
+              <div class="btn-group" role="group" aria-label="Actions">
+                <form action="/delete" method="POST">
+                  <input
+                    type="hidden"
+                    name="path"
+                    value="{{$.BasePath}}/{{.Name}}"
+                  />
+                  <button type="submit" class="btn btn-link">
+                    Delete
+                  </button>
+                </form>
+                {{if not .IsDir}}
+                <a href="/browse/{{$.BasePath}}/{{.Name}}">
+                  <button type="submit" class="btn btn-link">
+                    Download
+                  </button>
+                </a>
+                {{end}}
+              </div>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
