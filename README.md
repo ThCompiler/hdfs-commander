@@ -10,8 +10,10 @@ Written for my beloved collegaues @ [lili-data](https://github.com/lili-data/)
   - Download file from HDFS to local
 
 ## Ideas
+- mkdir
+- Rename
 - Custom javascript
   - upload, delete?
   - custom collapsible ([?](https://www.w3schools.com/howto/howto_js_collapsible.asp))
-  - more detailed file info
+- More detailed file info
   - SVG for delete/download/info/upload buttons
