@@ -1,6 +1,7 @@
 # HDFS-commander
 Dead simple web interface which helps you to explore and manage your data on HDFS.  
-Written for my beloved collegaues @ [lili-data](https://github.com/lili-data/)
+Written for my beloved colleagues @ [lili-data](https://github.com/lili-data/)  
+![ui](docs/ui.png)
 
 ## Config
 - Environment variables
