@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
@@ -54,6 +55,17 @@ func browse(w http.ResponseWriter, r *http.Request) {
 
 	// Check the path. If it is a file start a download, else return the dir content.
 	fi, err := client.Stat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		err = client.MkdirAll(path, 0777)
+		if err != nil {
+			log.Error(err)
+			data.Error = "Error while creating need dirs the path on HDFS: " + err.Error()
+			tmplList.Execute(w, data)
+			return
+		}
+
+		fi, err = client.Stat(path)
+	}
 	if err != nil {
 		log.Error(err)
 		data.Error = "Error while cheking the path on HDFS: " + err.Error()
@@ -110,6 +122,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 func upload(w http.ResponseWriter, r *http.Request) {
 	path := r.FormValue("path")
 	path = strings.Trim(path, "/")
+	path = strings.TrimPrefix(path+"/", "/")
 
 	err := r.ParseMultipartForm(1 << 20)
 	if err != nil {
@@ -128,7 +141,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	filepath := fmt.Sprintf("/%s/%s", path, header.Filename)
+	filepath := fmt.Sprintf("/%s%s", path, header.Filename)
 
 	fw, err := client.Create(filepath)
 	if err != nil {
